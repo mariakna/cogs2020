@@ -1,0 +1,292 @@
+---
+title: 'Tutorial 1: Quick introduction to R'
+author: "Maria Korochkina"
+date: "28/02/20"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+    theme: cerulean
+fontsize: 16pt
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Apart from [Discovering statistics with R](https://uk.sagepub.com/en-gb/eur/discovering-statistics-using-r/book236067) that Matt recommended on iLearn, there is Norman Matloff's "The art of R programming" (PDF available [here](http://diytranscriptomics.com/Reading/files/The%20Art%20of%20R%20Programming.pdf)), which I find quite useful. This is **not** about stats, it only teaches you basic R usage. I guess, for now, the most relevant chapters are 1 to 9, and if you'd like more info/detailed explanations on what follows please refer to this book. 
+
+
+# R data structures
+
+## Vectors
+
+A vector is the simplest type of data structure and it is defined as a sequence of data elements of the same basic type. Members of a vector are called components. Vector elements must all have the same mode, which can be integer, numeric (ﬂoating-point number), character (string), logical (boolean), complex, object, etc.
+
+Here is a vector containing numeric values from 1 to 10:
+
+```{r}
+# brackets around an expression mean that we want the result to be displayed
+(x <- c(1:10))
+```
+
+And here is a vector of logical values:
+
+```{r}
+(y <- c(TRUE, TRUE, FALSE))
+```
+
+*c* stands for "concatenate". In R, any object is considered a one-element vector, meaning that x and y consist of concatenated one-element vectors.
+
+You can do a lot of things with vectors, here are some examples:
+
+```{r}
+# Calculate how many members a vector has:
+length(x)
+# Combine vectors:
+colors <- c("green", "blue", "yellow")
+furniture <- c("chair", "table", "couch")
+(combine <- c(colors, furniture))
+# Repeat vectors:
+rep(colors,3) # we repeat vector "colors" three times
+# You can even repeat every value of a vector:
+rep(colors, 2, each = 2) # we repeat each element of vector "colors" two times and this also two times
+# Change elements of a vector:
+colors[2] <- "red"
+colors # now the 2nd element of vector "colors" is "red" instead of "blue"
+# Add vectors:
+x + c(11:20)
+# Name elements of the vector:
+b <- c(1:3)
+names(b) <- c("a", "b", "c")
+names(b)
+# filter:
+(b2 <- b[b*b > 3])
+```
+
+You can see from these examples that there are different types of vectors such as 
+numeric (vector x; contains numbers), logical (vector y; contains logical values) and characters (vector colors; contains text). Other types of vectors include integer vectors (special kind of numeric vector), factor vectors (vector that one needs when working with categories) etc. You will encounter these later in the course.
+
+You also see that R uses functions to do different kinds of sophisticated (or not) operations. To check how to use a specific function, enter *?function name* in the console, and you will get to an entry in the R manual which tells you how to use this function. For example:
+
+```{r, eval = F, echo = T}
+?rep
+```
+
+You can also do multiple operations in one go:
+
+```{r}
+# the code below creates a vector and repeats it 3 times with each element of the vector repeated 2 times (which leaves you with another vector!)
+rep(c(1:10),3, each = 2)
+```
+
+We can now do some calculations with our vector:
+
+```{r}
+mean(rep(c(1:10),3, each = 2)) # mean
+sd(rep(c(1:10),3, each = 2)) # standard deviation
+```
+
+Here is a list with some of the most commonly used R functions if you'd like to practice: <http://www.sr.bham.ac.uk/~ajrs/R/r-function_list.html> 
+
+## Matrices
+
+Multidimensional vectors in R are called arrays. A two-dimensional array is also called a matrix, and it is basically the same as the mathematical concept, i.e. a rectangular array. Actually, every matrix is simultaneously a vector, that is, a vector with two additional attributes added: the numbers of rows and columns.
+
+```{r}
+(matrix <- rbind(c(1:4),c(5:8))) # cbind for column bind
+```
+
+Above, I used the rbind() (stands for “row bind”) function to build a matrix from two vectors, storing the result in matrix. 
+
+Another way to create a matrix is:
+```{r}
+(matrix3 <- matrix(c(1:4), nrow = 2, ncol = 2))
+```
+
+You can do lots of things with matrices, for example: 
+
+```{r}
+# multiply matrices by vectors:
+(matrix %*% rep(5,4))
+# multiply matrices by matrices (matrix, or elementwise, multiplication):
+matrix2 <- rbind(c(1,2), c(1,1), c(1,3), c(0,5))
+matrix %*% matrix2
+# name columns and rows of a matrix:
+colnames(matrix3) <- c("col1", "col2") # rownames for rows
+matrix3
+```
+
+By the way, to find out what type of structure you are dealing with, do:
+
+```{r}
+class(matrix3)
+```
+
+## Lists
+
+A list is basically a container whose contents can be items of diverse data types.
+For instance, a list can contain a string, a vector and another list. R uses lists to package the return values of elaborate statistical functions (residuals, estimates etc). List members are delimited with dollar signs. Thus x$u is the u
+component in the list x.
+
+```{r}
+# Create a list:
+(list <- list(name = "Maria", salary = 1000, student = T))
+# delete elements:
+list[1] <- NULL 
+list
+# apply some function to all elements of the list:
+lapply(list(1:3,25:27), median) # you might also want to check when "apply()" is used!
+```
+
+## Data frames
+
+Technically, a data frame is a list, in which each component is a vector corresponding to a column. Data frames may look similar to matrices but don't count as such in R. You will use data frames very often in research. The "data.table" package, which Matt will be teaching you to use, provides an enhanced version of a data frame.
+
+Let's take a look at one of R's built-in data sets, mtcars, automobile data collected in 1974. Here is the help file about this data set: 
+
+```{r, eval = F, echo = T}
+?mtcars
+```
+
+To access the data, simply type the name of the data set:
+
+```{r}
+# use head() to show the first 6 rows:
+head(mtcars)
+```
+
+Let’s calculate some basic stats:
+
+```{r}
+# how many cars have more than 200 HP?
+nrow(mtcars[mtcars[,4] > 200,])
+# which ones?
+rownames(mtcars[mtcars[,4] > 200,])
+# average mile-per-gallon ﬁgure
+mean(mtcars[,1])
+# break it down by number of cylinders
+mean(mtcars[mtcars[,2] == 4,1]) # do this step by step to fully understand what's happening
+mean(mtcars[mtcars[,2] == 6,1])
+mean(mtcars[mtcars[,2] == 8,1])
+```
+
+Imagine if we had thousands of different values in column cyl! It would have been pretty time consuming to do this sort of calculations line by line. Ergo, we need a more compact way to do this - a for loop!
+
+```{r}
+for (ncyl in unique(mtcars[,2])) 
+print(mean(mtcars[mtcars[,2] == ncyl,1]))
+```
+
+Loops are super useful and you will have to use them all the time. 
+
+# R programming structures
+
+## Control statements
+
+### Loops
+
+*For (n in x)* means that there will be one iteration of the loop for each component of the vector x, with n taking on the values of those components. For example:
+```{r}
+x <- c(1:5)
+for (n in x) 
+  print(n^2)
+```
+
+What do you think happens in the examples below?
+
+```{r}
+# example 1
+i <- 1
+while (i < 6) {
+print(i)
+i = i+1
+}
+
+# example 2
+i <- 1
+while(1) {
+i <- i+4
+if (i > 10) break
+}
+i
+```
+
+### If and if-else
+
+The basic logic here is that if the test expression is true, the statement gets executed. But if it’s false, nothing happens:
+
+```{r}
+# if
+x <- 5
+if(x > 0){
+print("Positive number")
+}
+```
+
+In the example below, the else part is optional and is only evaluated if the test expression is false:
+```{r}
+# if-else
+x <- -5
+if(x > 0){
+print("Non-negative number")
+} else {
+print("Negative number")
+}
+# or
+if(x > 0) print("Non-negative number") else print("Negative number")
+# or like this (R can be very flexible!):
+y <- if(x > 0) 5 else 6
+y
+
+# if-else ladder
+x <- 0
+if (x < 0) {
+print("Negative number")
+} else if (x > 0) {
+print("Positive number")
+} else
+print("Zero")
+```
+
+# A few words about functions
+
+As mentioned above, R has many different functions ready for us to use. However, sometimes we need to define our own functions. The syntax of function creation is:
+
+```{r, eval = F, echo = T}
+g <- function(x) {
+return(x+1)
+}
+```
+
+Here, function() is a built-in R function whose job is to create functions!
+
+You can assign functions, use them as arguments to other functions, define functions within functions, and so on:
+
+```{r}
+f1 <- function(a,b) 
+  return(a+b)
+f2 <- function(a,b) 
+  return(a-b)
+f <- f1
+f(3,2)
+
+f <- f2
+f(3,2)
+
+g <- function(h,a,b) h(a,b)
+g(f1,3,2)
+g(f2,3,2)
+
+f <- function(x) {
+v <- 1
+g <- function(y) return((u+v+y)^2)
+gu <- g(u)
+print(gu)
+}
+u <- 6
+f()
+```

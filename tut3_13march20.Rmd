@@ -1,0 +1,346 @@
+---
+title: 'Tutorial 3'
+author: "Maria Korochkina"
+date: "13/03/20"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+    theme: cerulean
+fontsize: 16pt
+---
+
+```{r setup, include = F}
+knitr::opts_chunk$set(echo = T)
+```
+
+```{r eval = T, message = F, warning = F, echo = F}
+library("tidyverse")
+rm(list=ls())
+```
+
+## What is a random variable?
+
+Remember variables in algebra? In algebra, variables are unknown values. For example,
+
+$$
+x + 2 = 534
+$$
+
+Now, a *random* variable can be described as **a set of possible values** from a random experiment. A random variable is different from an algebraic variable because 
+
+* it has a whole set of values *and*
+* can take on any of these values randomly!
+
+To use the most common and simple example with coin tosses:
+
+Tossing a coin can lead to two events, or **outcomes**: Heads or Tails. If we assign some **values** to these outcomes, e.g. 1 for heads and 0 for tails, we can speak about a **set of values** $\{0,1\}$ associated with the outcome of our experiment. This set of values is called a random variable (e.g. $X$) so that $X = \{0,1\}$.
+
+NB: When talking about random variables, we use capital letters ($X$) to avoid confusion with the algebraic variables ($x$).
+
+A random variable's set of values is called a **sample space**. For instance, in a single coin tossing experiment, the sample space of the random variable $X$ would be $\{0,1\}$, while, if we were to throw a six-sided dice just once, the sample space would be $\{1, 2, 3, 4, 5, 6\}$.
+
+To express this mathematically, a random variable $X$ is a function $X: S \rightarrow R$ that associates to each outcome $k \in S$ exactly one number $X(k) = x$. All possible values of $X$ (i.e. all the $x$'s) are called the **support of** $X$, usually denoted as $S_{X}$. 
+
+## Discrete vs. continuous RVs
+
+There are two types of random variables, discrete and continuous. 
+
+A **discrete random variable** is one which may take on only a countable number of distinct values such as in examples above. Discrete random variables are usually (but not necessarily) counts. In other words, if a random variable can take only a finite number of distinct values, then it must be discrete. Further examples of discrete random variables include the number of students in a class, the Saturday night attendance at a cinema, the number of patients in a doctor's surgery, the number of cracked eggs in a box of ten, and so on.
+
+A **continuous random variable** is one which takes an infinite number of possible values. Continuous random variables are usually measurements. Examples include height, weight, the amount of sugar in an apple, the time required to run a mile or read a sentence. A continuous random variable is not defined at specific values. Instead, it is defined over an interval of values, and is represented by the area under a curve (in advanced mathematics, this is known as an integral). The probability of observing any single value is equal to 0, since the number of values which may be assumed by the random variable is infinite.
+
+Make sure you understand the difference between discrete and continuous RVs as it will become very important soon.
+
+Today, we will focus on discrete RVs.
+
+## Probability functions
+
+### Probability mass function
+
+Because random variables are sets of values, they all have **probability functions** associated with them. The probability function is a function which assigns to each possible outcome of some random variable $X$ a number between 0 and 1. That number is the probability associated with that outcome, and it describes the **likelihood** of occurrence of the outcome. 
+
+The probability distribution of a discrete random variable is a list of probabilities associated with each of its possible values. It is called the probability function or the **probability mass function** (PMF). Continuous RVs have
+**probability density functions** (PDF). For simplicity, both probability mass and probability density funtions are sometimes referred to as PDFs.
+
+Suppose a discrete random variable $X$ may take $k$ different values, with the probability that $X = x_{i}$ defined to be $P(X = x_{i}) = p_{i}$. Then, the probabilities $p_{i}$ must satisfy the following rules:
+
+* $0 < p_{i} < 1$ for each $j$
+* $p_{1} + p_{2} + ... + p_{k} = 1$
+
+In other words,
+
+$$
+p_{X}:S_{X} \rightarrow [0,1]
+$$
+
+defined by
+
+$$
+p_{X}(x) = P(X(k) = x), x \in S_{X}
+$$
+
+This PMF tells us the probability of getting a heads on 1, 2, ... $k$ coin tosses.  
+
+### Cumulative distribution function
+
+Apart from the PMF, each random variable (either discrete or continuous) also has a **cumulative distribution function** (CDF) associated with it. CDF gives the probability that the random variable $X$ is less than or equal to $x$, for every possible $x$. For a discrete random variable, the CDF is found by summing up the probabilities:
+
+$$
+F(a) = \sum_{all\, x \le a} p(x)
+$$
+
+The CDF tells us the cumulative probability of getting a heads in 1 or less coin tosses, 2 or less coin tosses, ... $k$ or less coin tosses.
+
+## Discrete probability distributions
+
+Among discrete random variables, the most important probability distributions are Bernoulli and Binomial distributions.
+
+### Bernoulli distribution
+
+The Bernoulli distribution is the discrete probability distribution of a random variable which takes a binary, or boolean output: 1 with probability $p$, and 0 with probability $q$, where $q = (1-p)$. The idea is that, whenever you are running an experiment which might lead either to a success or to a failure, you can associate with your success (labeled 1) a probability $p$, while your failures (labeled 0) will have a probability $q = (1-p)$.
+
+The probability function associated with a Bernoulli RV can be expressed like this:
+
+$$
+P(n) =
+       \begin{cases}
+       1 - p & for\: n = 0\\
+       p & for\: n = 1
+       \end{cases}
+$$
+
+or
+
+$$
+P(n) = p^{n}(1-p)^{1-n}
+$$
+
+The distribution of heads and tails in a *single* coin tossing experiment is an example of a Bernoulli distribution with $p = q = 1/2$ (given that you have a fair coin). If you were to toss a six-sided dice and you bet your money on the number 1, number 1 will be your success (labeled 1), while any other number will be a failure (labeled 0). The probability of success would be $p = 1/6$, while the probability of failure would be $q = 1 - p = 1 - 1/6 = 5/6$. Easy!
+
+The Bernoulli distribution is the simplest discrete distribution, and it serves as a building block for other more complicated discrete distributions:
+
+| Distribution      | Definition         
+| ----------------- |---------------------------------------------|
+| Binomial          | Number of successes in $n$ trials           |
+| Geometric         | Number of failures before the first success | 
+| Negative binomial | Number of failures before the $x$th success | 
+
+
+As mentioned above, the idea behind the Bernoulli distribution is that the experiment is repeated only once. But what happens if we run more than one trial (under the assumption that trials are *independent* from each other)? This is when we will need the Binomial distribution.
+
+### Binomial distribution
+
+The Binomial distribution describes the behavior of the outputs of $n$ random experiments, each having a Bernoulli distribution with probability $p$. In other words, it gives us the discrete probability distribution $p_{X}(x)$ of obtaining exactly $x$ successes out of $n$ Bernoulli trials (where the result of each Bernoulli trial is true with probability $p$ and false with probability $q = 1-p$). The probability of $x$ successes out of $n$ trials is defined by the PMF:
+
+$$
+p_{X}(x) = P(X = x) = \tbinom {n}{x} p^x(1 - p)^{n-x}
+$$
+In this formula, the symbol $\tbinom {n}{x}$ is read as "$n$ choose $x$" because there are $\tbinom {n}{x}$ ways to choose an (unordered) subset of $x$ elements from a fixed set of $n$ elements. $\tbinom {n}{x}$ is defined as the **binomial coefficient**. 
+
+To understand this, imagine that we flip a coin 3 times. We want to compute the probability of having 1 tails out of 3 trials. There are three scenarios, and in all of them we win: 
+
+* Heads, Heads, Tails
+* Heads, Tails, Heads
+* Tails, Heads, Heads
+
+Basically, there are three different combinations of outcomes which lead to a desired result. The binomial coefficient is used to incorporate this notion in our probability function. To reiterate, we need it because we are interested in having a given number of successes regardless of the order they are given to us, and the binomial coefficient takes into account all the possible combinations of having $x$ successes. 
+
+#### Example
+
+Let's say we have $n = 10$ coin tosses, and let the probability of success be $p = 0.5$. 
+
+
+**Question 1**: What is the probability of getting exactly $x$ successes? 
+
+For example, if $x = 3$, we want $P(X = 3)$. We can answer this question using either the cumulative distribution function (CDF) or the probability mass function (PMF). In R, the built-in funtion for CDF is `pbinom`, and for PMF - `dbinom`:
+
+
+```{r}
+## CDF:
+pbinom(3, size = 10, prob = 0.5) - pbinom(2, size = 10, prob = 0.5)
+
+## PMF:
+dbinom(3, size = 10, prob = 0.5)
+```
+
+```{r}
+## Plot the PMF:
+plot(1:11, dbinom(0:10, size = 10, prob = 0.5), main = "PMF", xaxt = "n", ylab = "P(X=x)", xlab = "x")
+axis(1,at = 1:11,labels = 0:10)
+```
+
+**Question 2**: What's the probability of $x$ or fewer successes, where $x$ is some number between 0 and 10? 
+
+This means that we need to find the CDF of $X \le x$.
+
+```{r}
+## sample size
+n <- 10
+## probability of success
+p <- 0.5
+
+probs <- rep(NA, 11)
+for(x in 0:10){
+## CDF:
+probs[x+1] <- round(pbinom(x, size = n, prob = p), digits = 2)
+}
+```
+
+|      | $P(X \le x)$ | CDF  |  
+|:----:|:------------:|:----:|
+|  1   | 0            | 0.00 |
+|  2   | 1            | 0.01 | 
+|  3   | 2            | 0.05 |
+|  4   | 3            | 0.17 |
+|  5   | 4            | 0.38 | 
+|  6   | 5            | 0.62 |
+|  7   | 6            | 0.83 |
+|  8   | 7            | 0.95 | 
+|  9   | 8            | 0.99 |
+|  10  | 9            | 1.00 |
+|  11  |10            | 1.00 | 
+
+```{r}
+## Plot the CDF:
+plot(1:11, probs, xaxt = "n", xlab = "x",
+ylab = expression(P(X <= x)), main = "CDF")
+axis(1, at = 1:11, labels = 0:10)
+```
+
+#### Central tendency and spread of the Binomial distribution
+
+##### Central tendency
+
+Last time we said that the central tendency of a sample can be measured using mean, mode and median. However, this time we are not dealing with a sample of numbers. Instead, we have a probability distribution from which samples of numbers can be taken. Therefore, we can't ask what the mean of this distribution is; we can only ask what the mean value of a sample is likely to be if we sample from our probability distribution, i.e. perform an experiment.   
+
+This when the notion of expected value comes in. Put simply, **expected value** is the average value of a random variable over a large number of experiments. 
+
+The expected value of a discrete random variable can be calculated by taking a sum in which each term is a possible value of the random variable multiplied by the probability of that outcome:
+
+$$
+E(X) = \sum_{x \in \Omega} xm(x)
+$$
+
+Don't be scared :) All this (complex looking) formula is telling us to do is find the mean by adding the probabilities! 
+
+This formula changes depending on what kinds of events are happening. To find the expected value for a binomial random variable we use the following (simplified) formula:
+
+$$
+E(X) = np
+$$
+
+where $n$ is the number of independent trials and $p$ the probability of success in any one of the trials. 
+
+For example, if we toss a coin ten times, and the probability of getting a heads in each trial is $0.5$, the expected value (the number of heads you can expect to get in 10 coin tosses) is:
+
+$$
+E(X) = np = 10 * 0.5 = 5
+$$
+
+As you can see, in this context, the mean and the expected value are so closely related they are almost the same thing. 
+
+##### Spread
+
+As you remember from last week, the spread of a sample is measured with **variance**. This is also true in case of random variables (i.e. distributions). 
+
+The variance of a discrete random variable is defined by
+
+$$
+Var(X) = \sigma^2_{X} = \sum(x_{i} - \mu_{x})^2p_{i}
+$$
+
+while the standard deviation ($\sigma$) is the square root of the variance.
+
+Given what we have just said about the central tendency of a binomial distribuion, we can define $\mu_{X}$ like this:
+
+$$
+\mu_{X} = E_{X} = np
+$$
+
+This (after quite a few steps) gives us the following formula for variance of the Binomial distribution:
+
+$$
+Var(X) = \sigma^2_{X} = np(1-p)
+$$
+
+## Sample proportions
+
+Often sampling is done in order to estimate the proportion of a population that has a specific characteristic, such as the proportion of all items coming off an assembly line that are defective or the proportion of all people entering a retail store who make a purchase before leaving. So, basically, the **sample proportion** is the fraction of samples which were successes.
+
+The sample proportion is denoted as $\hat{p}$ (pronounced "p-hat"). In our example above, if in reality 43% of people entering a store make a purchase before leaving, the population proportion $p$ would be 0.43, while, if in a sample of 200 people entering the store, 78 make a purchase, the sample proportion $\hat{p} = 78/200 = 0.39$.
+
+The sample proportion is a random variable: it varies from sample to sample in a way that cannot be predicted with certainty. It has a mean $\mu_{\hat{p}}$ and a standard deviation $\sigma_{\hat{p}}$.
+
+Why is this important for us today?
+
+Because, if we know that the count $X$ of "successes" in a group of $n$ trials with success probability $p$ has a binomial distribution with expected value (or mean) $np$ and variance $np(1-p)$, we are able to derive information about the **distribution of the sample proportion**, namely, the count of successes $X$ divided by the number of observations $n$. By the multiplicative properties of the mean, the mean of the distribution of $X/n$ is equal to the mean of $X$ divided by $n$, or $p/n = p$. This proves that the sample proportion $\hat{p}$ is an *unbiased* estimator of the population proportion $p$. The variance of $X/n$ is equal to the variance of $X$ divided by $n^2$, or $\frac{np(1-p)}{n^2} = \frac{p(1-p)}{n}$. 
+
+This formula is important because it indicates that **as the size of the sample increases, variance decreases**. Matt demonstrated this in today's lecture.
+
+For large values of $n$, the distributions of the count $X$ and the sample proportion are approximately normal. This result follows from the **Central Limit Theorem** (to be discussed next week). The mean and variance for the approximately normal distribution of $X$ are $np$ and $np(1-p)$, identical to the mean and variance of the $B(n,p)$ distribution. Similarly, the mean and variance for the approximately normal distribution of the sample proportion are $p$ and $p(1-p)/n$.
+
+Related to this, another important thing to note is this: **the higher the number of trials $n$, the more the shape of our Binomial random variable recalls the well-known bell-shaped curve of Gaussian distribution**. 
+
+This is easy to see once we plot Binomial distributions for different $n$'s:
+
+```{r, message = F, echo = F}
+theme_set(theme_classic())
+
+x <- -5:250
+n = c(6, 10, 30, 60, 100)
+p = 0.5
+
+binom = data.frame(x = rep(x, length(n)), 
+                   y = dbinom(x, rep(n, each = length(x)), p),
+                   n = rep(n, each = length(x)))
+
+ggplot(binom %>% filter(y > 1e-5) %>% 
+         group_by(n) %>%
+         mutate(x = x - x[which.max(y)]), 
+       aes(x, y, colour = factor(n))) +
+  geom_line() + geom_point(size = 0.6) +
+  labs(colour = "n")
+```
+
+```{r, message = F, echo = F}
+# The mean of a binomial distribution is n*p, where n is the number of trials and p is the probability of success. The variance is n*p*(1-p). So, for each of the binomial densities above, we want normal densities with the same mean and variance. We create a data frame of these below and then plot the binomial and normal densities together.
+
+# First, we create a new vector of x values that includes a higher density of points, to reflect the fact that the normal distribution is continuous, rather than discrete:
+x = seq(-5,250,length.out = 2000)
+
+# Now we create a data frame of normal densities with the same means and variances as the binomial densities above:
+normal = data.frame(x = rep(x, length(n)),
+                  y = dnorm(x, rep(n,each = length(x))*p, (rep(n, each = length(x))*p*(1-p))^0.5),
+                  n = rep(n, each = length(x)))
+
+# Cut off y-values below ymin
+ymin = 1e-3
+
+# So now we have two data frames to plot. We still add the binom data frame in the main call to ggplot. But here we also add a call to geom_line for plotting the normal densities. And we give geom_line the normal data frame. Also, for this plot we've used geom_segment to emphasize the discrete points of the binomial density (you could also use geom_bar for this):
+ggplot(binom %>% filter(y > ymin), aes(x, y)) +
+  geom_point(size = 1.2, colour = "blue") +
+  geom_line(data = normal %>% filter(y > ymin), lwd = 0.7, colour = "red") +
+  geom_segment(aes(x = x, xend = x, y = 0, yend = y), lwd = 0.8, alpha = 0.5, colour = "blue") +
+  facet_grid(. ~ n, scales = "free", space = "free")
+```
+
+## To conclude...
+
+It is important to rememeber that
+
+* if the Binomial distribution has $n = 1$ (only one trial is run), it turns to a simple Bernoulli distribution
+
+* if $n$ tends towards infinite and both $p$ and $(1-p)$ are not indefinitely small, the Binomial distribution approximates a Gaussian distribution, which is why the latter is considered to be a limiting form of Binomial distribution.
+
+<style>
+div.blue{background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
+
+**NB**: make sure you don't mix up number of Bernoulli trials $n$ and the sample size! In our example with coin tosses, the sample size is the number of participants, i.e. the number of people who have taken part in our coin tossing experiment, while $n$ refers to the number of coin tosses each participant made.
+
+</div>
